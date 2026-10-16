@@ -48,7 +48,7 @@ function HouseVideo() {
     <motion.video
       ref={ref}
       key={src}
-      className="absolute inset-0 h-full w-full max-h-full max-w-full object-cover object-center"
+      className="absolute inset-0 h-full w-full object-cover"
       src={src}
       poster="/videos/house-poster.jpg"
       autoPlay

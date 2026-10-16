@@ -16,7 +16,9 @@ export default function HowWeWorkSection() {
           <ol className="mt-8 space-y-5">
             {STEPS.map((step) => (
               <li key={step.number} className="flex gap-4 rounded-2xl bg-white p-5 ring-1 ring-sand">
-                <span className="font-serif text-3xl text-gold">{step.number}</span>
+                <span className="shrink-0 whitespace-nowrap font-serif text-3xl tabular-nums text-gold">
+                  {step.number}
+                </span>
                 <div>
                   <h3 className="font-serif text-2xl">{step.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-stone">{step.copy}</p>

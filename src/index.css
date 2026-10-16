@@ -39,8 +39,7 @@ body {
   font-family: var(--font-sans);
   overflow-x: clip;
   overflow-x: hidden;
-  overflow-wrap: anywhere;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-synthesis: none;
@@ -53,17 +52,18 @@ body {
   max-width: 100%;
 }
 
-img,
-svg,
-video {
-  max-width: 100%;
-  height: auto;
+@layer base {
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 .font-serif {
   line-height: 1.15;
   text-wrap: balance;
-  overflow-wrap: anywhere;
 }
 
 @supports not (text-wrap: balance) {
@@ -287,6 +287,15 @@ textarea {
   isolation: isolate;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
   mask-image: radial-gradient(white, black);
+}
+
+@layer components {
+  .media-clip > img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+  }
 }
 
 .ripple-host {
