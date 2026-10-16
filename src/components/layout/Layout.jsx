@@ -11,9 +11,9 @@ export default function Layout() {
   useRouteScrollRestoration();
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh max-w-full flex-col overflow-x-clip">
       <Navbar />
-      <main className="w-full min-w-0 flex-1">
+      <main className="w-full min-w-0 max-w-full flex-1 overflow-x-clip">
         <PageStage key={pathname}>
           <Outlet />
         </PageStage>

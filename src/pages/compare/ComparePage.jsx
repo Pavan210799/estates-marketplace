@@ -43,7 +43,7 @@ export default function ComparePage() {
         ) : null}
       </div>
       {items.length ? (
-        <div className="mt-10 overflow-x-auto pb-2">
+        <div className="mt-10 max-w-full overflow-x-auto overscroll-x-contain pb-2">
           <div
             className="grid min-w-[640px] gap-4"
             style={{ gridTemplateColumns: `8rem repeat(${items.length}, minmax(0, 1fr))` }}

@@ -28,7 +28,7 @@ export default function PropertyGrid({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 gap-6 md:grid-cols-2",
+        "grid grid-cols-1 gap-6 overflow-x-clip md:grid-cols-2",
         columns === 3 && "lg:grid-cols-6",
       )}
     >
@@ -44,7 +44,7 @@ export default function PropertyGrid({
               default: { duration: 0.5, delay: Math.min(index, 8) * 0.06, ease: [0.22, 1, 0.36, 1] },
               layout: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
             }}
-            className={cn("min-w-0 overflow-visible py-1", itemClass(index, properties.length, columns))}
+            className={cn("min-w-0 py-1", itemClass(index, properties.length, columns))}
           >
             <PropertyCard property={property} priority={index < priorityCount} {...cardProps} />
           </motion.div>

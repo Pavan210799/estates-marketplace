@@ -25,6 +25,10 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -33,19 +37,39 @@ body {
   background: var(--color-ivory);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  overflow-x: clip;
   overflow-x: hidden;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
 }
 
 #root {
   min-height: 100dvh;
+  overflow-x: clip;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 img,
 svg,
 video {
   max-width: 100%;
+  height: auto;
+}
+
+.font-serif {
+  line-height: 1.15;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+@supports not (text-wrap: balance) {
+  .font-serif {
+    text-wrap: pretty;
+  }
 }
 
 button,

@@ -34,7 +34,7 @@ function RollingNumber({ value, delay = 0 }) {
         {digits.map((digit, index) => (
           <span
             key={`${index}-${digit}`}
-            className="relative inline-block h-[1.2em] leading-[1.2em] [clip-path:inset(0_-0.25em)]"
+            className="relative inline-block h-[1.2em] overflow-hidden leading-[1.2em]"
           >
             <span className="invisible">{digit}</span>
             <motion.span
@@ -86,16 +86,16 @@ export default function HeroSection({ properties, spotlight, cityCount }) {
 
   return (
     <section ref={sectionRef} className="relative isolate overflow-hidden bg-ink">
-      <motion.div className="absolute inset-x-0 -top-[8%] h-[116%]" style={{ y: backdropY }}>
+      <motion.div className="absolute inset-0 overflow-hidden" style={{ y: backdropY }}>
         <motion.div
-          className="h-full w-full"
+          className="h-full w-full origin-center"
           initial={{ scale: 1.14, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2.2, ease: easeOut }}
         >
           <motion.div
-            className="h-full w-full"
-            animate={{ scale: [1, 1.07, 1] }}
+            className="h-full w-full origin-center"
+            animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
           >
             <CoverImage src={heroImage} alt="" priority className="h-full w-full object-cover" />

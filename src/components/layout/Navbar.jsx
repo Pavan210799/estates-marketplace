@@ -138,7 +138,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-[80] w-full self-start border-b border-sand/80 bg-ivory/92 backdrop-blur-md supports-[backdrop-filter]:bg-ivory/85">
+    <header className="sticky top-0 z-[80] w-full max-w-[100vw] self-start border-b border-sand/80 bg-ivory/92 backdrop-blur-md supports-[backdrop-filter]:bg-ivory/85">
       <Container className="flex h-[4.5rem] items-center justify-between gap-3">
         <Logo size="md" />
 

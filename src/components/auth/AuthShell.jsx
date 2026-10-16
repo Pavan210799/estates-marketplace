@@ -48,7 +48,7 @@ function HouseVideo() {
     <motion.video
       ref={ref}
       key={src}
-      className="absolute inset-0 h-full w-full object-cover"
+      className="absolute inset-0 h-full w-full max-h-full max-w-full object-cover object-center"
       src={src}
       poster="/videos/house-poster.jpg"
       autoPlay
@@ -157,7 +157,7 @@ export default function AuthShell({ title, subtitle, children, footer }) {
   }, []);
 
   return (
-    <div className="grid h-dvh max-h-dvh grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-ivory flat:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] flat:grid-rows-1 lg:grid-cols-[1.05fr_1fr] lg:grid-rows-1">
+    <div className="grid h-dvh max-h-dvh max-w-[100vw] grid-rows-[auto_minmax(0,1fr)] overflow-hidden overflow-x-clip bg-ivory flat:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] flat:grid-rows-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:grid-rows-1">
       <VideoPanel />
 
       <div className="relative min-h-0 bg-parchment lg:h-dvh">
