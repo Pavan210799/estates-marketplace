@@ -1,3 +1,4 @@
+import { useAuth } from "../../context/AuthContext";
 import { useMarketplace } from "../../context/MarketplaceContext";
 import useDocumentTitle from "../../hooks/useDocumentTitle";
 import AdvisorsSection from "../../components/landing/AdvisorsSection";
@@ -12,6 +13,7 @@ import Reveal from "../../components/ui/Reveal";
 
 export default function LandingPage() {
   useDocumentTitle("Indian homes, privately presented");
+  const { splashUser } = useAuth();
   const { properties } = useMarketplace();
   const spotlight =
     [...properties].find((property) => property.featured) ?? properties[0];
@@ -23,7 +25,14 @@ export default function LandingPage() {
 
   return (
     <div>
-      <HeroSection properties={properties} spotlight={spotlight} cityCount={cityCount} />
+      {!splashUser ? (
+        <HeroSection properties={properties} spotlight={spotlight} cityCount={cityCount} />
+      ) : (
+        <div
+          className="relative isolate min-h-[min(92vh,880px)] overflow-hidden bg-ink"
+          aria-hidden="true"
+        />
+      )}
       <NeighborhoodMarquee />
       <Reveal>
         <FeaturedCollection featured={featured} />

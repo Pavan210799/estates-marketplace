@@ -1,20 +1,96 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { PROPERTIES } from "../data/properties";
 import { readStorage, writeStorage, todayISO } from "../lib/utils";
+import { useAuth } from "./AuthContext";
 
 const MarketplaceContext = createContext(null);
 
-const WISH_KEY = "estates.wishlist";
-const COMPARE_KEY = "estates.compare";
 const SUBMIT_KEY = "estates.submissions";
+const WISH_STORE = "estates.wishlist.byUser";
+const COMPARE_STORE = "estates.compare.byUser";
+const LEGACY_WISH = "estates.wishlist";
+const LEGACY_COMPARE = "estates.compare";
+
+function accountId(email) {
+  return email.trim().toLowerCase();
+}
+
+function readUserList(storeKey, legacyKey, email) {
+  if (!email) return [];
+  const id = accountId(email);
+  const store = readStorage(storeKey, {});
+  if (Array.isArray(store[id])) return store[id];
+
+  const legacy = readStorage(legacyKey, []);
+  if (legacy.length) {
+    store[id] = legacy;
+    writeStorage(storeKey, store);
+    localStorage.removeItem(legacyKey);
+    return legacy;
+  }
+  return [];
+}
+
+function writeUserList(storeKey, email, list) {
+  if (!email) return;
+  const id = accountId(email);
+  const store = readStorage(storeKey, {});
+  store[id] = list;
+  writeStorage(storeKey, store);
+}
 
 export function MarketplaceProvider({ children }) {
-  const [wishlist, setWishlist] = useState(() => readStorage(WISH_KEY, []));
-  const [compare, setCompare] = useState(() => readStorage(COMPARE_KEY, []));
+  const { user } = useAuth();
+  const email = user?.email ?? null;
+  const activeAccount = useRef(null);
+
+  const [wishlist, setWishlist] = useState([]);
+  const [compare, setCompare] = useState([]);
   const [submissions, setSubmissions] = useState(() => readStorage(SUBMIT_KEY, []));
   const [toast, setToast] = useState(null);
 
   const toastTimer = useRef(0);
+  const wishlistSnapshot = useRef([]);
+  const compareSnapshot = useRef([]);
+
+  useEffect(() => {
+    wishlistSnapshot.current = wishlist;
+    compareSnapshot.current = compare;
+  }, [wishlist, compare]);
+
+  useEffect(() => {
+    const next = email ? accountId(email) : null;
+    const prev = activeAccount.current;
+
+    if (prev && prev !== next) {
+      writeUserList(WISH_STORE, prev, wishlistSnapshot.current);
+      writeUserList(COMPARE_STORE, prev, compareSnapshot.current);
+    }
+
+    activeAccount.current = next;
+
+    if (email) {
+      setWishlist(readUserList(WISH_STORE, LEGACY_WISH, email));
+      setCompare(readUserList(COMPARE_STORE, LEGACY_COMPARE, email));
+    } else {
+      setWishlist([]);
+      setCompare([]);
+    }
+  }, [email]);
+
+  const persistWishlist = useCallback(
+    (next) => {
+      if (email) writeUserList(WISH_STORE, email, next);
+    },
+    [email],
+  );
+
+  const persistCompare = useCallback(
+    (next) => {
+      if (email) writeUserList(COMPARE_STORE, email, next);
+    },
+    [email],
+  );
 
   const pushToast = useCallback((message) => {
     setToast(message);
@@ -28,12 +104,12 @@ export function MarketplaceProvider({ children }) {
         const next = current.includes(id)
           ? current.filter((item) => item !== id)
           : [...current, id];
-        writeStorage(WISH_KEY, next);
+        persistWishlist(next);
         pushToast(current.includes(id) ? "Removed from saved homes" : "Saved to wishlist");
         return next;
       });
     },
-    [pushToast],
+    [persistWishlist, pushToast],
   );
 
   const toggleCompare = useCallback(
@@ -41,7 +117,7 @@ export function MarketplaceProvider({ children }) {
       setCompare((current) => {
         if (current.includes(id)) {
           const next = current.filter((item) => item !== id);
-          writeStorage(COMPARE_KEY, next);
+          persistCompare(next);
           pushToast("Removed from compare");
           return next;
         }
@@ -50,12 +126,12 @@ export function MarketplaceProvider({ children }) {
           return current;
         }
         const next = [...current, id];
-        writeStorage(COMPARE_KEY, next);
+        persistCompare(next);
         pushToast("Added to compare");
         return next;
       });
     },
-    [pushToast],
+    [persistCompare, pushToast],
   );
 
   const submitProperty = useCallback(
@@ -87,37 +163,37 @@ export function MarketplaceProvider({ children }) {
     (id) => {
       setWishlist((current) => {
         const next = current.filter((item) => item !== id);
-        writeStorage(WISH_KEY, next);
+        persistWishlist(next);
         return next;
       });
       pushToast("Removed from saved homes");
     },
-    [pushToast],
+    [persistWishlist, pushToast],
   );
 
   const clearWishlist = useCallback(() => {
     setWishlist([]);
-    writeStorage(WISH_KEY, []);
+    persistWishlist([]);
     pushToast("Wishlist cleared");
-  }, [pushToast]);
+  }, [persistWishlist, pushToast]);
 
   const removeFromCompare = useCallback(
     (id) => {
       setCompare((current) => {
         const next = current.filter((item) => item !== id);
-        writeStorage(COMPARE_KEY, next);
+        persistCompare(next);
         return next;
       });
       pushToast("Removed from compare");
     },
-    [pushToast],
+    [persistCompare, pushToast],
   );
 
   const clearCompare = useCallback(() => {
     setCompare([]);
-    writeStorage(COMPARE_KEY, []);
+    persistCompare([]);
     pushToast("Comparison cleared");
-  }, [pushToast]);
+  }, [persistCompare, pushToast]);
 
   const deleteSubmission = useCallback(
     (id) => {
@@ -128,17 +204,17 @@ export function MarketplaceProvider({ children }) {
       });
       setWishlist((current) => {
         const next = current.filter((item) => item !== id);
-        writeStorage(WISH_KEY, next);
+        persistWishlist(next);
         return next;
       });
       setCompare((current) => {
         const next = current.filter((item) => item !== id);
-        writeStorage(COMPARE_KEY, next);
+        persistCompare(next);
         return next;
       });
       pushToast("Your listing was deleted");
     },
-    [pushToast],
+    [persistCompare, persistWishlist, pushToast],
   );
 
   const properties = useMemo(() => [...submissions, ...PROPERTIES], [submissions]);

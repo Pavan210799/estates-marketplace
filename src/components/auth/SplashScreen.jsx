@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Mark } from "../brand/Logo";
 
@@ -112,9 +112,20 @@ function SplashContent({ user, onDone }) {
 
 export default function SplashScreen() {
   const { splashUser, dismissSplash } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (!splashUser) return;
+    setUser(splashUser);
+    setOpen(true);
+  }, [splashUser]);
+
   return (
-    <AnimatePresence>
-      {splashUser ? <SplashContent key="splash" user={splashUser} onDone={dismissSplash} /> : null}
+    <AnimatePresence onExitComplete={dismissSplash}>
+      {open && user ? (
+        <SplashContent key="splash" user={user} onDone={() => setOpen(false)} />
+      ) : null}
     </AnimatePresence>
   );
 }
