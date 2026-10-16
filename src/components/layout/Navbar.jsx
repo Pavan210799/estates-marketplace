@@ -99,7 +99,7 @@ function UserMenu({ user, onSignOut }) {
             <button
               type="button"
               role="menuitem"
-              className="btn-fx mt-2 flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm text-danger transition-colors hover:bg-danger/5"
+              className="btn-fx mt-2 flex w-full items-center justify-center gap-2 rounded-2xl px-3 py-3 text-sm text-danger transition-colors hover:bg-danger/5"
               onClick={() => {
                 setOpen(false);
                 onSignOut();
